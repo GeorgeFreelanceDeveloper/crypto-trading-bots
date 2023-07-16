@@ -102,7 +102,7 @@ class CapitalBrokerClient:
             if res.status != 200:
                 raise Exception(f"HTTP Error {res.status}: {res.reason}")
 
-            return data
+            return data["Positions"]
         except Exception as e:
             raise Exception(
                 f"Failed call GET method /api/v1/positions on api-capital.backend-capital.com REST api: {str(e)}")
@@ -117,7 +117,7 @@ class CapitalBrokerClient:
             payload = json.dumps({
                 "epic": trade["ticker"],
                 "direction": trade["direction"],
-                "size": trade["amount"],
+                "size": trade["size"],
                 "guaranteedStop": trade["guaranteedStop"],
                 "stopDistance": trade["stopDistance"],
                 "trailingStop": trade["trailingStop"],
