@@ -102,7 +102,7 @@ class CapitalBrokerClient:
             if res.status != 200:
                 raise Exception(f"HTTP Error {res.status}: {res.reason}")
 
-            return data["Positions"]
+            return data["positions"]
         except Exception as e:
             raise Exception(
                 f"Failed call GET method /api/v1/positions on api-capital.backend-capital.com REST api: {str(e)}")
