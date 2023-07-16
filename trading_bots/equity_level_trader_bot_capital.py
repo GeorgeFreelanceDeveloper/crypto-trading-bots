@@ -1,9 +1,8 @@
 import logging
 import sys
 
-import pandas as pd
-
 from trading_bots.helpers.equity_level_trader_bot_capital_helper import EquityLevelTraderBotCapitalHelper
+from trading_bots.repository.equity_level_trader_bot_capital_repository import EquityLevelTraderBotCapitalRepository
 from trading_bots.templates.bot import Bot
 
 
@@ -11,7 +10,7 @@ class EquityLevelTraderBotCapital(Bot):
 
     def __init__(self, config: dict):
         self.helper = EquityLevelTraderBotCapitalHelper(config)
-        self.trades_csv_path = config["base"]["ordersCsvPath"]
+        self.repository = EquityLevelTraderBotCapitalRepository(config["base"]["ordersCsvPath"])
 
     def run(self):
         logging.info("Start EquityLevelTraderCapital")
@@ -20,10 +19,10 @@ class EquityLevelTraderBotCapital(Bot):
             logging.info("The American stock exchange is currently not open, the bot will not continue working.")
             sys.exit(0)
 
-        orders = self.helper.load_orders(self.trades_csv_path)
+        orders = self.repository.load_orders()
         self.check_early_reaction(orders)
         self.place_trade(orders)
-        self.save_orders(orders)
+        self.repository.save_orders(orders)
 
         logging.info("Finished EquityLevelTraderCapital")
 
@@ -97,7 +96,3 @@ class EquityLevelTraderBotCapital(Bot):
                 logging.error(f"Failed place trade [OrderId: {order['id']}]: {str(e)}")
 
         logging.info("Finished place trade step")
-
-    def save_orders(self, orders):
-        logging.info("Save orders to csv file")
-        pd.DataFrame(orders).to_csv(self.trades_csv_path, index=False)

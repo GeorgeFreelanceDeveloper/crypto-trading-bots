@@ -7,7 +7,6 @@ import sys
 from datetime import datetime, time, timedelta
 from io import StringIO
 
-import pandas as pd
 import requests
 
 from trading_bots.helpers.equity_level_trade_bot_capital_auth_helper import EquityLevelTraderBotCapitalAuthHelper
@@ -21,18 +20,6 @@ class EquityLevelTraderBotCapitalHelper:
         self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
         self.risk_per_trade_usd = config["base"]["riskPerTradeUsd"]
         self.auth_helper = EquityLevelTraderBotCapitalAuthHelper(config)
-
-    @staticmethod
-    def load_orders(file_path):
-        logging.info("Loading orders from csv file")
-        result = []
-        with open(file_path, 'r') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                result.append(row)
-
-        logging.debug(f"Loaded orders: \n {result}")
-        return result
 
     def is_open_exchange(self) -> bool:
         now = datetime.now()
