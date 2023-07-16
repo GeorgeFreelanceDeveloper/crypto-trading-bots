@@ -1,25 +1,26 @@
-import csv
 import datetime
-import http.client
-import json
 import logging
 import sys
 from datetime import datetime, time, timedelta
-from io import StringIO
 
-import requests
-
-from trading_bots.helpers.equity_level_trade_bot_capital_auth_helper import EquityLevelTraderBotCapitalAuthHelper
+from trading_bots.api.alpha_vantage_client import AlphaVantageClient
+from trading_bots.api.capital_broker_client import CapitalBrokerClient
 
 
 class EquityLevelTraderBotCapitalHelper:
 
     def __init__(self, config: dict):
-        self.alpha_vantage_api_key = config["alphavantageApiKey"]["apiKey"]
-        self.capital_api_config = config["capitalApi"]
-        self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
+        self.alpha_vantage_client = AlphaVantageClient(config["alphavantageApiKey"]["apiKey"])
+        self.capital_broker_client = CapitalBrokerClient(
+            url=config["capitalApi"]["url"],
+            username=config["capitalApi"]["username"],
+            password=config["capitalApi"]["password"],
+            api_key=config["capitalApi"]["apiKey"],
+            sub_account_name=config["capitalApi"]["subAccountName"],
+            token_expire_minutes=config["capitalApi"]["tokenExpireMinutes"]
+        )
         self.risk_per_trade_usd = config["base"]["riskPerTradeUsd"]
-        self.auth_helper = EquityLevelTraderBotCapitalAuthHelper(config)
+        self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
 
     def is_open_exchange(self) -> bool:
         now = datetime.now()
@@ -27,81 +28,37 @@ class EquityLevelTraderBotCapitalHelper:
 
     def is_open_positions(self) -> bool:
         try:
-            logging.debug("Place trade")
-            authorization_token = self.auth_helper.get_authorization_token()
-            conn = http.client.HTTPSConnection(self.capital_api_config["url"])
-            payload = ''
-            headers = {
-                'X-SECURITY-TOKEN': authorization_token["X-SECURITY-TOKEN"],
-                'CST': authorization_token["CST"]
-            }
-            conn.request("GET", "/api/v1/positions", payload, headers)
-            res = conn.getresponse()
-
-            data = json.loads(res.read().decode("utf-8"))
-
-            logging.debug(f"Response is_open_positions: {data}")
-
-            if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
-
-            return len(data["positions"]) > 0
+            positions = self.capital_broker_client.get_positions()
+            logging.debug(f"Response getPositions: {positions}")
+            return len(positions) > 0
         except Exception as e:
-            logging.error(
-                f"Failed call GET method /api/v1/positions on api-capital.backend-capital.com REST api: {str(e)}")
+            logging.error(f"Failed call get_positions on CapitalBrokerClient: {str(e)}")
             sys.exit(-1)
 
     def place_trade(self, order: dict):
         try:
-            logging.debug("Place trade")
-            authorization_token = self.auth_helper.get_authorization_token()
-            conn = http.client.HTTPSConnection(self.capital_api_config["url"])
-            logging.debug(order)
-
             move = float(order["entry_price"]) - float(order["stop_loss_price"])
-            profit_target = float(order["entry_price"]) + move
-            amount = round(abs(self.risk_per_trade_usd / move), self._get_round_rule(order["ticker"]))
-
-            payload = json.dumps({
-                "epic": order["ticker"],
+            trade = {
+                "ticker": order["ticker"],
                 "direction": "BUY" if order["direction"] == "LONG" else "SELL",
-                "size": amount,
+                "size": round(abs(self.risk_per_trade_usd / move), self._get_round_rule(order["ticker"])),
                 "guaranteedStop": False,
                 "stopDistance": abs(move),
                 "trailingStop": True,
-                "profitLevel": profit_target
-            })
-
-            logging.debug(f"Payload place_trade: {payload}")
-            headers = {
-                'X-SECURITY-TOKEN': authorization_token["X-SECURITY-TOKEN"],
-                'CST': authorization_token["CST"],
-                'Content-Type': 'application/json'
+                "profitLevel": float(order["entry_price"]) + move
             }
-
-            conn.request("POST", "/api/v1/positions", payload, headers)
-            res = conn.getresponse()
-
-            logging.debug(f"Response place_trade: {res.read().decode('utf-8')}")
-            if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
-
+            logging.debug(f"Place trade: {trade}")
+            self.capital_broker_client.place_trade(trade)
         except Exception as e:
-            raise Exception(
-                f"Failed call POST method /api/v1/positions on api-capital.backend-capital.com REST api: {str(e)}")
+            raise Exception(f"Failed call place_trade on CapitalBrokerClient: {str(e)}")
 
     def was_yesterday_earnings(self, ticker) -> bool:
         try:
             now = datetime.now().date()
             yesterday = now - timedelta(days=1)
 
-            url = f"https://www.alphavantage.co/query?function=EARNINGS&symbol={ticker}&apikey={self.alpha_vantage_api_key}"
-            response = requests.get(url)
-
-            if response.status_code != 200:
-                raise Exception(f"HTTP Error {response.status_code}: {response.reason}")
-
-            data = response.json()
+            data = self.alpha_vantage_client.get_earnings(ticker)
+            logging.debug(f"Response call get_earnings on alphaVantageClient: {data}")
 
             earnings_types = ["quarterlyEarnings", "annualEarnings"]
             earnings_date_names = ["reportedDate", "fiscalDateEnding"]
@@ -124,18 +81,7 @@ class EquityLevelTraderBotCapitalHelper:
         try:
             now = datetime.now().date()
             next_10_days = now + timedelta(days=count_days)
-            horizon = "12month"
-
-            url = f"https://www.alphavantage.co/query?function=EARNINGS_CALENDAR&symbol={ticker}&horizon={horizon}&apikey={self.alpha_vantage_api_key}"
-            response = requests.get(url)
-
-            if response.status_code != 200:
-                raise Exception(f"HTTP Error {response.status_code}: {response.reason}")
-
-            csv_data = response.text
-
-            csv_reader = csv.DictReader(StringIO(csv_data))
-            data = list(csv_reader)
+            data = self.alpha_vantage_client.get_earnings_calendar(ticker)
 
             for row in data:
                 report_date = row["reportDate"]
@@ -159,7 +105,7 @@ class EquityLevelTraderBotCapitalHelper:
         before_entry_price = entry_price + ((entry_price - stop_loss) * self.percentage_before_entry)
         logging.debug(f"Before entry price: {before_entry_price}")
 
-        last_closed_bar = self._get_last_closed_bar(order["ticker"])
+        last_closed_bar = self.capital_broker_client.get_last_closed_bar(order["ticker"])
         logging.debug(f"Last closed bar: {last_closed_bar}")
 
         return (order_side == "LONG" and before_entry_price >= last_closed_bar["lowPrice"]) or (
@@ -169,7 +115,7 @@ class EquityLevelTraderBotCapitalHelper:
         entry_price = float(order["entry_price"])
         order_side = order["direction"]
 
-        market_info = self._get_market_info(order["ticker"])
+        market_info = self.capital_broker_client.get_market_info(order["ticker"])
 
         bid = market_info["snapshot"]["bid"]
         ask = market_info["snapshot"]["offer"]
@@ -187,7 +133,7 @@ class EquityLevelTraderBotCapitalHelper:
         take_profit = entry_price + move
         logging.debug(f"Take profit price: {take_profit}")
 
-        last_closed_bar = self._get_last_closed_bar(order["ticker"])
+        last_closed_bar = self.capital_broker_client.get_last_closed_bar(order["ticker"])
         logging.debug(f"Last closed bar: {last_closed_bar}")
 
         return (order_side == "LONG" and take_profit <= last_closed_bar["highPrice"]) or (
@@ -200,69 +146,6 @@ class EquityLevelTraderBotCapitalHelper:
     @staticmethod
     def _is_time_between_range(actual_time: datetime.time, start_time: datetime.time, end_time: datetime.time) -> bool:
         return start_time <= actual_time <= end_time
-
-    def _get_last_closed_bar(self, ticker: str, time_frame: str = "MINUTE") -> dict:
-        try:
-            logging.debug("Get last closed bar")
-
-            authorization_token = self.auth_helper.get_authorization_token()
-            conn = http.client.HTTPSConnection(self.capital_api_config["url"])
-            payload = ''
-            headers = {
-                'X-SECURITY-TOKEN': authorization_token["X-SECURITY-TOKEN"],
-                'CST': authorization_token["CST"]
-            }
-
-            conn.request("GET",
-                         f"/api/v1/prices/{ticker}?resolution={time_frame}",
-                         payload, headers)
-
-            res = conn.getresponse()
-            if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
-
-            data = json.loads(res.read().decode("utf-8"))
-
-            last_bar_raw = data["prices"][-1]
-
-            last_bar = {
-                "snapshotTime": last_bar_raw["snapshotTime"],
-                "openPrice": last_bar_raw["openPrice"]["bid"],
-                "highPrice": last_bar_raw["highPrice"]["bid"],
-                "lowPrice": last_bar_raw["lowPrice"]["bid"],
-                "closePrice": last_bar_raw["closePrice"]["bid"]
-            }
-
-            return last_bar
-
-        except Exception as e:
-            raise Exception(f"Failed call GET method /api/v1/prices on capital.com REST api: {str(e)}")
-
-    def _get_market_info(self, ticker: str):
-        try:
-            authorization_token = self.auth_helper.get_authorization_token()
-
-            conn = http.client.HTTPSConnection(self.capital_api_config["url"])
-            payload = ''
-            headers = {
-                'X-SECURITY-TOKEN': authorization_token["X-SECURITY-TOKEN"],
-                'CST': authorization_token["CST"]
-            }
-            conn.request("GET", f"/api/v1/markets?&epics={ticker}", payload, headers)
-            res = conn.getresponse()
-
-            if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
-
-            response = res.read().decode("utf-8")
-
-            logging.debug(f"Response _get_market_info: {response}")
-
-            market_details = json.loads(response)["marketDetails"]
-
-            return market_details[0]
-        except Exception as e:
-            raise Exception(f"Failed call GET method /api/v1/markets on capital.com REST api: {str(e)}")
 
     def _get_round_rule(self, ticker):
         market_info = self._get_market_info(ticker)
