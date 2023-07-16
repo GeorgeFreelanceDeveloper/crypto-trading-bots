@@ -9,8 +9,10 @@ from trading_bots.templates.bot import Bot
 class EquityLevelTraderBotCapital(Bot):
 
     def __init__(self, config: dict):
-        self.helper = EquityLevelTraderBotCapitalHelper(config)
-        self.repository = EquityLevelTraderBotCapitalRepository(config["base"]["ordersCsvPath"])
+        self.repository = EquityLevelTraderBotCapitalRepository(config["base"]["ordersCsvPath"],
+                                                                config["base"]["earningCalendarCsvPath"])
+        earning_calendar = self.repository.load_earnings_calendar()
+        self.helper = EquityLevelTraderBotCapitalHelper(config, earning_calendar)
 
     def run(self):
         logging.info("Start EquityLevelTraderCapital")
@@ -78,11 +80,14 @@ class EquityLevelTraderBotCapital(Bot):
                     logging.info(f"Skip early reaction order: [OrderId: {order['id']}]")
                     continue
 
-                if self.helper.was_yesterday_earnings(ticker):
+                if self.helper.was_yesterday_earnings(order):
                     logging.info(f"Skip ticker {ticker}, because yesterday was earnings. [OrderId: {order['id']}]")
                     continue
 
-                if self.helper.is_earnings_next_days(ticker, 10):
+                # Update earnings date in orders
+                order["next_earnings_date"] = self.helper.get_next_earnings_date(ticker)
+
+                if self.helper.is_earnings_next_days(order, 10):
                     logging.info(
                         f"Skip ticker {ticker}, because equity has earning in next 10 days. [OrderId: {order['id']}]")
                     continue

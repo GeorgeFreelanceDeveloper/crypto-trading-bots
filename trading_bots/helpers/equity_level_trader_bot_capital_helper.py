@@ -3,14 +3,12 @@ import logging
 import sys
 from datetime import datetime, time, timedelta
 
-from trading_bots.api.alpha_vantage_client import AlphaVantageClient
 from trading_bots.api.capital_broker_client import CapitalBrokerClient
 
 
 class EquityLevelTraderBotCapitalHelper:
 
-    def __init__(self, config: dict):
-        self.alpha_vantage_client = AlphaVantageClient(config["alphavantageApiKey"]["apiKey"])
+    def __init__(self, config: dict, earning_calendar: list):
         self.capital_broker_client = CapitalBrokerClient(
             url=config["capitalApi"]["url"],
             username=config["capitalApi"]["username"],
@@ -19,6 +17,7 @@ class EquityLevelTraderBotCapitalHelper:
             sub_account_name=config["capitalApi"]["subAccountName"],
             token_expire_minutes=config["capitalApi"]["tokenExpireMinutes"]
         )
+        self.earnings_calendar = earning_calendar
         self.risk_per_trade_usd = config["base"]["riskPerTradeUsd"]
         self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
 
@@ -52,50 +51,21 @@ class EquityLevelTraderBotCapitalHelper:
         except Exception as e:
             raise Exception(f"Failed call place_trade on CapitalBrokerClient: {str(e)}")
 
-    def was_yesterday_earnings(self, ticker) -> bool:
-        try:
-            now = datetime.now().date()
-            yesterday = now - timedelta(days=1)
+    @staticmethod
+    def was_yesterday_earnings(order: dict) -> bool:
+        today = datetime.now().date()
+        yesterday = today - timedelta(days=1)
+        return order["next_earnings_date"] == yesterday
 
-            data = self.alpha_vantage_client.get_earnings(ticker)
-            logging.debug(f"Response call get_earnings on alphaVantageClient: {data}")
+    @staticmethod
+    def is_earnings_next_days(order: dict, count_days: int = 10) -> bool:
+        today = datetime.now().date()
+        next_n_days = today + timedelta(days=count_days)
+        return order["next_earnings_date"] <= next_n_days
 
-            earnings_types = ["quarterlyEarnings", "annualEarnings"]
-            earnings_date_names = ["reportedDate", "fiscalDateEnding"]
-
-            for earnings_type, earnings_date_name in zip(earnings_types, earnings_date_names):
-                earnings = data.get(earnings_type, [])
-                last_earnings_date = datetime.strptime(earnings[0][earnings_date_name], "%Y-%m-%d").date()
-                logging.debug(f"Last earnings date: {last_earnings_date}")
-                if earnings and last_earnings_date == yesterday:
-                    logging.debug(f"The last earnings result ({earnings_type}) was yesterday: {yesterday}")
-                    return True
-
-            return False
-
-        except Exception as e:
-            logging.error(f"Failed call GET method /query?function=EARNINGS on www.alphavantage.co REST api: {str(e)}")
-            sys.exit(-1)
-
-    def is_earnings_next_days(self, ticker: str, count_days: int = 10) -> bool:
-        try:
-            now = datetime.now().date()
-            next_10_days = now + timedelta(days=count_days)
-            data = self.alpha_vantage_client.get_earnings_calendar(ticker)
-
-            for row in data:
-                report_date = row["reportDate"]
-                report_date = datetime.strptime(report_date, "%Y-%m-%d").date()
-                logging.debug(f"Next earnings date: {report_date}")
-                if report_date <= next_10_days:
-                    logging.debug(f"The future earnings {report_date} is in less then 10 days.")
-                    return True
-
-            return False
-        except Exception as e:
-            logging.error(
-                f"Failed call GET method /query?function=EARNINGS_CALENDAR on www.alphavantage.co REST api: {str(e)}")
-            sys.exit(-1)
+    def get_next_earnings_date(self, ticker: str):
+        next_earnings_date = [x["reportDate"] for x in self.earnings_calendar if x["symbol"] == ticker]
+        return next_earnings_date[0] if next_earnings_date else None
 
     def check_price_reach_before_entry_price(self, order: dict) -> bool:
         entry_price = float(order["entry_price"])
@@ -150,3 +120,10 @@ class EquityLevelTraderBotCapitalHelper:
     def _get_round_rule(self, ticker):
         market_info = self._get_market_info(ticker)
         return 1 if market_info["dealingRules"]["minDealSize"]["value"] == 0.1 else 0
+
+    @staticmethod
+    def _parse_last_earnings_date(earnings: dict):
+        if earnings:
+            return earnings["quarterlyEarnings"][0]["reportDate"]
+        else:
+            return None
