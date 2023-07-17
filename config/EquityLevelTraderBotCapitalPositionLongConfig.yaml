@@ -10,4 +10,4 @@ capitalApi:
   password: x
   apiKey: x
   subAccountName: UsStocksPositionPortfolioLong
-  TokenExpireMinutes: 10
+  tokenExpireMinutes: 10
