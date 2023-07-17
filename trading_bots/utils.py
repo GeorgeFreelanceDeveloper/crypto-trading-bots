@@ -11,15 +11,6 @@ from trading_bots.place_trailing_stops_bot_bybit import PlaceTrailingStopsBotByb
 from trading_bots.templates.bot import Bot
 
 
-def load_config(config_file: str) -> dict:
-    with open(config_file, 'r') as stream:
-        try:
-            parsed_yaml = yaml.safe_load(stream)
-            return parsed_yaml
-        except yaml.YAMLError as exc:
-            raise exc
-
-
 def create_bot(bot_name: str, config: dict) -> Bot:
     match bot_name:
         case "BybitExampleBot":
@@ -53,4 +44,4 @@ def create_bot(bot_name: str, config: dict) -> Bot:
         case "EquityLevelTraderBotCapitalPositionShort":
             return EquityLevelTraderBotCapital(config)
         case _:
-            raise ValueError("Not supported bot_name: {}".format(bot_name))
+            raise ValueError(f"Not supported bot_name: {bot_name}")
