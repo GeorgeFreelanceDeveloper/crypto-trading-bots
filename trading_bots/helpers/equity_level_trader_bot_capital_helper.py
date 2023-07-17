@@ -8,7 +8,7 @@ from trading_bots.api.capital_broker_client import CapitalBrokerClient
 
 class EquityLevelTraderBotCapitalHelper:
 
-    def __init__(self, config: dict, earning_calendar: list):
+    def __init__(self, config: dict, earning_calendar: list, earning_calendar_old: list):
         self.capital_broker_client = CapitalBrokerClient(
             url=config["capitalApi"]["url"],
             username=config["capitalApi"]["username"],
@@ -18,6 +18,7 @@ class EquityLevelTraderBotCapitalHelper:
             token_expire_minutes=config["capitalApi"]["tokenExpireMinutes"]
         )
         self.earnings_calendar = earning_calendar
+        self.earnings_calendar_old = earning_calendar_old
         self.risk_per_trade_usd = config["base"]["riskPerTradeUsd"]
         self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
 
@@ -51,20 +52,21 @@ class EquityLevelTraderBotCapitalHelper:
         except Exception as e:
             raise Exception(f"Failed call place_trade on CapitalBrokerClient: {str(e)}")
 
-    @staticmethod
-    def was_yesterday_earnings(order: dict) -> bool:
+    def was_yesterday_earnings(self, ticker: str) -> bool:
         today = datetime.now().date()
         yesterday = today - timedelta(days=1)
-        return order["next_earnings_date"] == yesterday
+        next_earning_date = self.get_next_earnings_date(ticker, old=True)
+        return next_earning_date == yesterday
 
-    @staticmethod
-    def is_earnings_next_days(order: dict, count_days: int = 10) -> bool:
+    def is_earnings_next_days(self, ticker: str, count_days: int = 10) -> bool:
         today = datetime.now().date()
         next_n_days = today + timedelta(days=count_days)
-        return order["next_earnings_date"] <= next_n_days
+        next_earning_date = self.get_next_earnings_date(ticker)
+        return next_earning_date <= next_n_days
 
-    def get_next_earnings_date(self, ticker: str):
-        next_earnings_date = [x["reportDate"] for x in self.earnings_calendar if x["symbol"] == ticker]
+    def get_next_earnings_date(self, ticker: str, old: bool = False):
+        earnings_calendar = self.earnings_calendar if not old else self.earnings_calendar_old
+        next_earnings_date = [x["reportDate"] for x in earnings_calendar if x["symbol"] == ticker]
         return next_earnings_date[0] if next_earnings_date else None
 
     def check_price_reach_before_entry_price(self, order: dict) -> bool:

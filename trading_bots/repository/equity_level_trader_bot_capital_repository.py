@@ -51,3 +51,7 @@ class EquityLevelTraderBotCapitalRepository:
         except Exception as e:
             logging.error(f"Failed load earning calendar: {str(e)}")
             sys.exit(-1)
+
+    def load_earnings_calendar_old(self) -> list:
+        # TODO: Lucka implement me
+        pass
