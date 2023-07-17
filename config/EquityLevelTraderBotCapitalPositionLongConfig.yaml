@@ -1,7 +1,7 @@
 base:
   ordersCsvPath: data/us_equity_position_portfolio_long.csv
   earningCalendarCsvPath: data/earnings_calendar.csv
-  earningCalendarCsvPathOld: data/earnings_calendar_old.csv
+  earningCalendarOldCsvPath: data/earnings_calendar_old.csv
   riskPerTradeUsd: 100
   percentageBeforeEntry: 0.33
 capitalApi:
