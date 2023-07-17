@@ -1,5 +1,7 @@
 base:
   ordersCsvPath: data/us_equity_position_portfolio_short.csv
+  earningCalendarCsvPath: data/earnings_calendar.csv
+  earningCalendarOldCsvPath: data/earnings_calendar_old.csv
   riskPerTradeUsd: 100
   percentageBeforeEntry: 0.33
 capitalApi:
@@ -7,7 +9,5 @@ capitalApi:
   username: x
   password: x
   apiKey: x
-  subAccountName: PositionShortPortfolio
+  subAccountName: UsStocksPositionPortfolioShort
   TokenExpireMinutes: 10
-alphavantageApiKey:
-  apiKey: x

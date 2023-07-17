@@ -9,7 +9,5 @@ capitalApi:
   username: x
   password: x
   apiKey: x
-  subAccountName: PositionLongPortfolio
+  subAccountName: UsStocksPositionPortfolioLong
   TokenExpireMinutes: 10
-alphavantageApiKey:
-  apiKey: x
