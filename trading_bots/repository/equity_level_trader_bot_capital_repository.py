@@ -8,9 +8,10 @@ import pandas as pd
 
 class EquityLevelTraderBotCapitalRepository:
 
-    def __init__(self, orders_file_path: str, earning_calendar_file_path: str):
+    def __init__(self, orders_file_path: str, earning_calendar_file_path: str, earning_calendar_old_file_path: str):
         self.orders_file_path = orders_file_path
         self.earning_calendar_file_path = earning_calendar_file_path
+        self.earning_calendar_old_file_path = earning_calendar_old_file_path
 
     def load_orders(self) -> list:
         try:
@@ -49,9 +50,21 @@ class EquityLevelTraderBotCapitalRepository:
             logging.debug(f"Loaded earning calendar: {result}")
             return result
         except Exception as e:
-            logging.error(f"Failed load earning calendar: {str(e)}")
+            logging.error(f"Failed to load earning calendar: {str(e)}")
             sys.exit(-1)
 
     def load_earnings_calendar_old(self) -> list:
-        # TODO: Lucka implement me
-        pass
+        try:
+            logging.debug("Start loading old earning calendar")
+            result = []
+            with open(self.earning_calendar_old_file_path, "r") as file:
+                reader = csv.DictReader(file)
+                for row in reader:
+                    row["reportDate"] = datetime.strptime(row["reportDate"], "%Y-%m-%d").date()
+                    row["fiscalDateEnding"] = datetime.strptime(row["fiscalDateEnding"], "%Y-%m-%d").date()
+                    result.append(row)
+            logging.debug(f"Loaded old earning calendar: {result}")
+            return result
+        except Exception as e:
+            logging.error(f"Failed to load old earning calendar: {str(e)}")
+            sys.exit(-1)
