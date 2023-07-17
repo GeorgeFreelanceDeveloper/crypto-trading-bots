@@ -62,7 +62,7 @@ class EquityLevelTraderBotCapitalHelper:
         today = datetime.now().date()
         next_n_days = today + timedelta(days=count_days)
         next_earning_date = self.get_next_earnings_date(ticker)
-        return next_earning_date <= next_n_days
+        return next_earning_date <= next_n_days if next_earning_date is not None else False
 
     def get_next_earnings_date(self, ticker: str, old: bool = False):
         earnings_calendar = self.earnings_calendar if not old else self.earnings_calendar_old

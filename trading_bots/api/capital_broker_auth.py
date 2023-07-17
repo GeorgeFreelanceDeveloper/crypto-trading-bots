@@ -55,8 +55,10 @@ class CapitalBrokerAuth:
                 "X-SECURITY-TOKEN": res.getheader("X-SECURITY-TOKEN"),
                 "CST": res.getheader("CST")
             }
+
             account_id = self._parse_account_id(data, self.sub_account_name)
-            self._switch_to_sub_account(account_id, authorization_token)
+            if account_id != data["currentAccountId"]:
+                self._switch_to_sub_account(account_id, authorization_token)
 
             return authorization_token
         except Exception as e:
