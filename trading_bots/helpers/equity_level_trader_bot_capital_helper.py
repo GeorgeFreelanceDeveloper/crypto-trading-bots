@@ -85,6 +85,7 @@ class EquityLevelTraderBotCapitalHelper:
 
     def is_price_at_entry_price(self, order: dict):
         entry_price = float(order["entry_price"])
+        stop_loss_price = float(order["stop_loss_price"])
         order_side = order["direction"]
 
         market_info = self.capital_broker_client.get_market_info(order["ticker"])
@@ -92,9 +93,8 @@ class EquityLevelTraderBotCapitalHelper:
         bid = market_info["snapshot"]["bid"]
         ask = market_info["snapshot"]["offer"]
 
-        return (order_side == "LONG" and ask < entry_price) or (
-                order_side == "SHORT" and bid > entry_price
-        )
+        return (order_side == "LONG" and entry_price > ask > stop_loss_price) or (
+                    order_side == "SHORT" and entry_price < bid < stop_loss_price)
 
     def check_price_reach_profit_target(self, order: dict) -> bool:
         entry_price = float(order["entry_price"])
@@ -120,7 +120,7 @@ class EquityLevelTraderBotCapitalHelper:
         return start_time <= actual_time <= end_time
 
     def _get_round_rule(self, ticker):
-        market_info = self._get_market_info(ticker)
+        market_info = self.capital_broker_client.get_market_info(ticker)
         return 1 if market_info["dealingRules"]["minDealSize"]["value"] == 0.1 else 0
 
     @staticmethod
