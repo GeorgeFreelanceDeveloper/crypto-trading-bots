@@ -11,7 +11,7 @@ class EquityLevelTraderBotCapital(Bot):
     def __init__(self, config: dict):
         self.repository = EquityLevelTraderBotCapitalRepository(config["base"]["ordersCsvPath"],
                                                                 config["base"]["earningCalendarCsvPath"],
-                                                                config["base"]["earningCalendarCsvPath"])
+                                                                config["base"]["earningCalendarOldCsvPath"])
         earning_calendar = self.repository.load_earnings_calendar()
         earning_calendar_old = self.repository.load_earnings_calendar_old()
         self.helper = EquityLevelTraderBotCapitalHelper(config, earning_calendar, earning_calendar_old)
