@@ -1,5 +1,5 @@
 base:
-  ordersCsvPath: data/us_equity_position_portfolio_long.csv
+  ordersCsvPath: data/us_equity_position_orders_long.csv
   earningCalendarCsvPath: data/earnings_calendar.csv
   earningCalendarOldCsvPath: data/earnings_calendar_old.csv
   riskPerTradeUsd: 100

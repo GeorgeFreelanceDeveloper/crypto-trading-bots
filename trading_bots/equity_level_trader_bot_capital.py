@@ -2,18 +2,19 @@ import logging
 import sys
 
 from trading_bots.helpers.equity_level_trader_bot_capital_helper import EquityLevelTraderBotCapitalHelper
-from trading_bots.repository.equity_level_trader_bot_capital_repository import EquityLevelTraderBotCapitalRepository
+from trading_bots.repository.earnings_calendar_repository import EarningsCalendarRepository
+from trading_bots.repository.us_equity_orders_repository import UsEquityOrdersRepository
 from trading_bots.templates.bot import Bot
 
 
 class EquityLevelTraderBotCapital(Bot):
 
     def __init__(self, config: dict):
-        self.repository = EquityLevelTraderBotCapitalRepository(config["base"]["ordersCsvPath"],
-                                                                config["base"]["earningCalendarCsvPath"],
-                                                                config["base"]["earningCalendarOldCsvPath"])
-        earning_calendar = self.repository.load_earnings_calendar()
-        earning_calendar_old = self.repository.load_earnings_calendar_old()
+        self.orders_repository = UsEquityOrdersRepository(config["base"]["ordersCsvPath"])
+        self.earnings_calendar_repository = EarningsCalendarRepository(config["base"]["earningCalendarCsvPath"],
+                                                                       config["base"]["earningCalendarOldCsvPath"])
+        earning_calendar = self.earnings_calendar_repository.load()
+        earning_calendar_old = self.earnings_calendar_repository.load_old()
         self.helper = EquityLevelTraderBotCapitalHelper(config, earning_calendar, earning_calendar_old)
 
     def run(self):
@@ -23,23 +24,22 @@ class EquityLevelTraderBotCapital(Bot):
             logging.info("The American stock exchange is currently not open, the bot will not continue working.")
             sys.exit(0)
 
-        orders = self.repository.load_orders()
+        orders = self.orders_repository.load_orders()
         self.check_early_reaction(orders)
         self.place_trade(orders)
-        self.repository.save_orders(orders)
+        self.orders_repository.save_orders(orders)
 
         logging.info("Finished EquityLevelTraderCapital")
 
     def check_early_reaction(self, orders):
+        logging.info("---------------------------------")
         logging.info("Start check early reaction step")
+        logging.info("---------------------------------")
 
         logging.info("Start process orders")
         for order in orders:
             try:
                 logging.info(f"Proces order with id: {order['id']}")
-                if order["active"]:
-                    logging.info(f"Skip active order: [OrderId: {order['id']}]")
-                    continue
 
                 if order['early_reaction']:
                     logging.info(f"Skip early reaction order: [OrderId: {order['id']}]")
@@ -58,10 +58,14 @@ class EquityLevelTraderBotCapital(Bot):
             except Exception as e:
                 logging.error(f"Failed proces order [OrderId: {order['id']}]: {str(e)}")
 
+        logging.info("---------------------------------")
         logging.info("Finished check early reaction step")
+        logging.info("---------------------------------")
 
     def place_trade(self, orders):
+        logging.info("---------------------------------")
         logging.info("Start place trade step")
+        logging.info("---------------------------------")
 
         if self.helper.is_open_positions():
             logging.info(
@@ -99,4 +103,6 @@ class EquityLevelTraderBotCapital(Bot):
             except Exception as e:
                 logging.error(f"Failed place trade [OrderId: {order['id']}]: {str(e)}")
 
+        logging.info("---------------------------------")
         logging.info("Finished place trade step")
+        logging.info("---------------------------------")
