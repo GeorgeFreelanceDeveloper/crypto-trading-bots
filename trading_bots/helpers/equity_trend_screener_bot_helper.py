@@ -8,16 +8,6 @@ import yfinance as yf
 
 class EquityTrendScreenerBotHelper:
 
-    # TODO: Lucka move logic to MarketsRepository methods load_most_traded_us_stocks(), load_russell_2000(), load_sp_500() via _get_tickers(file_path)
-    @staticmethod
-    def get_tickers(file_path: str) -> list:
-        try:
-            df = pd.read_csv(file_path)
-            return df["Ticker"].tolist()
-        except Exception as e:
-            logging.error(f"Failed read tickers from file {file_path}: {str(e)}")
-            sys.exit(-1)
-
     @staticmethod
     def get_daily_ohlc(ticker: str) -> pd.DataFrame:
         try:

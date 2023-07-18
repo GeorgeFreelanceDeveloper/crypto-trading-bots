@@ -1,4 +1,3 @@
-import json
 import logging
 import uuid
 import sys
@@ -6,15 +5,15 @@ import sys
 from datetime import datetime
 
 from trading_bots import constants
+from trading_bots.repository.funding_dates_repository import FundingDatesRepository
 
 
 class CheckFuturesMarginLevelBotBybitHelper:
 
     def __init__(self, pybit_client, funding_dates_json_path):
         self.pybit_client = pybit_client
-        self.funding_dates_json_path = funding_dates_json_path # TODO: remove this line
-        self.funding_dates = self.load_funding_dates_list()
-        self.funding_dates_repository = None # TODO: Lucka
+        self.funding_dates_repository = FundingDatesRepository(funding_dates_json_path)
+        self.funding_dates = self.funding_dates_repository.load()
 
     def get_available_balance_on_futures_account(self) -> float:
         try:
@@ -79,7 +78,7 @@ class CheckFuturesMarginLevelBotBybitHelper:
                                                                   fromAccountType="SPOT",
                                                                   toAccountType="CONTRACT")
             self.funding_dates.append(datetime.now())
-            self.save_funding_dates_list(self.funding_dates)
+            self.funding_dates_repository.save(self.funding_dates)
         except Exception as e:
             logging.error("Failed call method create_internal_transfer on pybit client: {}".format(str(e)))
             sys.exit(-1)
@@ -89,15 +88,4 @@ class CheckFuturesMarginLevelBotBybitHelper:
         if response["retMsg"] == 'success':
             logging.info("Successfully funding futures account from spot with amount: {} USDT".format(funding_amount))
 
-    # TODO: Lucka: move logic to FundingDatesRepository method load()
-    def load_funding_dates_list(self) -> list:
-        with open(self.funding_dates_json_path) as f:
-            content = f.read()
-            if content:
-                string_list = json.loads(content)
-        return [datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S') for dt_str in string_list]
 
-    # TODO: Lucka: move logic to FundingDatesRepository method save(funding_dates)
-    def save_funding_dates_list(self, funding_dates: list) -> None:
-        with open(self.funding_dates_json_path, 'w') as f:
-            json.dump([dt.strftime('%Y-%m-%d %H:%M:%S') for dt in funding_dates], f, indent=4)
