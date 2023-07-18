@@ -86,12 +86,14 @@ class EarlyReactionBotBybitHelper:
             before_entry_ids.remove(not_exists_id)
             logging.info("Removing not existing id: {}".format(not_exists_id))
 
+    # TODO: Lucka: move logic to BeforeEntryIdsRepository method load()
     def load_before_entry_ids_list(self) -> list:
         with open(self.before_entry_ids_json_path) as f:
             content = f.read()
             if content:
                 return json.loads(content)
 
+    # TODO: Lucka: move logic to BeforeEntryIdsRepository method save(before_entry_ids)
     def save_before_entry_ids_list(self, before_entry_ids: list) -> None:
         with open(self.before_entry_ids_json_path, 'w') as f:
             json.dump(before_entry_ids, f, indent=4)

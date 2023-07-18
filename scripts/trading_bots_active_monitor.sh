@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# TODO: Lucka trading-bots-activity-monitor.sh nakonfigurovat pouze pro earlyReaction, placeTrailingStop crypto swing + levelTrader US stock
+
 BOT_NAMES=("early-reaction-bot-bybit-intraday" \
 "early-reaction-bot-bybit-swing" \
 "early-reaction-bot-bybit-position" \

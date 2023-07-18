@@ -8,6 +8,7 @@ import yfinance as yf
 
 class EquityTrendScreenerBotHelper:
 
+    # TODO: Lucka move logic to MarketsRepository methods load_most_traded_us_stocks(), load_russell_2000(), load_sp_500() via _get_tickers(file_path)
     @staticmethod
     def get_tickers(file_path: str) -> list:
         try:

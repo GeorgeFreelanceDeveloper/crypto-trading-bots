@@ -12,8 +12,9 @@ class CheckFuturesMarginLevelBotBybitHelper:
 
     def __init__(self, pybit_client, funding_dates_json_path):
         self.pybit_client = pybit_client
-        self.funding_dates_json_path = funding_dates_json_path
+        self.funding_dates_json_path = funding_dates_json_path # TODO: remove this line
         self.funding_dates = self.load_funding_dates_list()
+        self.funding_dates_repository = None # TODO: Lucka
 
     def get_available_balance_on_futures_account(self) -> float:
         try:
@@ -88,6 +89,7 @@ class CheckFuturesMarginLevelBotBybitHelper:
         if response["retMsg"] == 'success':
             logging.info("Successfully funding futures account from spot with amount: {} USDT".format(funding_amount))
 
+    # TODO: Lucka: move logic to FundingDatesRepository method load()
     def load_funding_dates_list(self) -> list:
         with open(self.funding_dates_json_path) as f:
             content = f.read()
@@ -95,6 +97,7 @@ class CheckFuturesMarginLevelBotBybitHelper:
                 string_list = json.loads(content)
         return [datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S') for dt_str in string_list]
 
+    # TODO: Lucka: move logic to FundingDatesRepository method save(funding_dates)
     def save_funding_dates_list(self, funding_dates: list) -> None:
         with open(self.funding_dates_json_path, 'w') as f:
             json.dump([dt.strftime('%Y-%m-%d %H:%M:%S') for dt in funding_dates], f, indent=4)

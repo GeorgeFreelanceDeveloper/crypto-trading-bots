@@ -19,6 +19,23 @@ class EarlyReactionBotBybit(BybitBot):
         logging.info("Count pending orders: {}".format(len(pending_orders)))
         logging.debug("Pending orders: {}".format(pending_orders))
 
+        # TODO: lucka simplify code like this
+        for order in pending_orders:
+            order_id = order["orderId"]
+            logging.info(f"Process order: {order_id}")
+
+            if order_id in self.before_entry_ids:
+                logging.info(f"Check price reach profit target")
+                if self.helper.check_price_reach_profit_target(order):
+                    logging.info("Price reach profit target, order will be cancel")
+                    self.helper.cancel_pending_order(order_id, order["symbol"])
+                    self.before_entry_ids.remove(order_id)
+                    continue
+
+            if self.helper.check_price_reach_before_entry_price(order):
+                logging.info("Price reach before entry price, set attribute before_entry")
+                self.before_entry_ids.append(order_id)
+
         for order in pending_orders:
             logging.info("Process order {}".format(order["orderId"]))
 
