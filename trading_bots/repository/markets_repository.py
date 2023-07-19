@@ -24,6 +24,7 @@ class MarketsRepository:
     def _get_tickers(file_path: str) -> list:
         try:
             df = pd.read_csv(file_path)
+            logging.debug(f"Tickers (first 5): {df.head()}")
             return df["Ticker"].tolist()
         except Exception as e:
             logging.error(f"Failed read tickers from file {file_path}: {str(e)}")

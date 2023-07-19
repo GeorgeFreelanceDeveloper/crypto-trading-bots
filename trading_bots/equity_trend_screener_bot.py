@@ -14,7 +14,7 @@ class EquityTrendScreenerBot(Bot):
     def __init__(self, config):
         super().__init__(config)
         self.helper = EquityTrendScreenerBotHelper()
-        self.markets = MarketsRepository(config)
+        self.markets_repository = MarketsRepository(config)
 
     def run(self) -> None:
         logging.info("Start EquityTrendScreenerBot")
@@ -31,17 +31,17 @@ class EquityTrendScreenerBot(Bot):
         logging.info(self.SEPARATOR)
 
         if self.config["mostTradedUsStocks"]["enable"]:
-            tickers_most_traded_us_stocks = self.markets.load_most_traded_us_stocks()
+            tickers_most_traded_us_stocks = self.markets_repository.load_most_traded_us_stocks()
         else:
             tickers_most_traded_us_stocks = []
 
         if self.config["sp500"]["enable"]:
-            tickers_sp_500 = self.markets.load_sp_500()
+            tickers_sp_500 = self.markets_repository.load_sp_500()
         else:
             tickers_sp_500 = []
 
         if self.config["russell2k"]["enable"]:
-            tickers_russell_2k = self.markets.load_russell_2000()
+            tickers_russell_2k = self.markets_repository.load_russell_2000()
         else:
             tickers_russell_2k = []
 

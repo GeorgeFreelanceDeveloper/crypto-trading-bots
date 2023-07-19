@@ -23,6 +23,7 @@ class BeforeEntryIdsRepository:
     def save(self, before_entry_ids: list) -> None:
         try:
             logging.debug("Start saving before entry ids list")
+            logging.debug(f"Before entry ids: {before_entry_ids}")
             with open(self.before_entry_ids_json_path, 'w') as f:
                 json.dump(before_entry_ids, f, indent=4)
         except Exception as e:
