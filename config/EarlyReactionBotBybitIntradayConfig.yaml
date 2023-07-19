@@ -1,6 +1,6 @@
 base:
   percentageBeforeEntry: 0.33
-  beforeEntryIdsJsonPath: data/before_entry_ids_intraday.json
+  beforeEntryIdsJsonPath: data/cache/before_entry_ids_intraday.json
 bybitApi:
   testnet: True
   apiKey:
