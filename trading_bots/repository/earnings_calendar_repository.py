@@ -20,7 +20,7 @@ class EarningsCalendarRepository:
                     row["reportDate"] = datetime.strptime(row["reportDate"], "%Y-%m-%d").date()
                     row["fiscalDateEnding"] = datetime.strptime(row["fiscalDateEnding"], "%Y-%m-%d").date()
                     result.append(row)
-            logging.debug(f"Loaded earning calendar: {result}")
+            logging.debug(f"Loaded earning calendar (first 5 rows): {result[0:5]}")
             return result
         except Exception as e:
             logging.error(f"Failed to load earning calendar: {str(e)}")
@@ -36,7 +36,7 @@ class EarningsCalendarRepository:
                     row["reportDate"] = datetime.strptime(row["reportDate"], "%Y-%m-%d").date()
                     row["fiscalDateEnding"] = datetime.strptime(row["fiscalDateEnding"], "%Y-%m-%d").date()
                     result.append(row)
-            logging.debug(f"Loaded old earning calendar: {result}")
+            logging.debug(f"Loaded old earning calendar (first 5 rows): {result[0:5]}")
             return result
         except Exception as e:
             logging.error(f"Failed to load old earning calendar: {str(e)}")
