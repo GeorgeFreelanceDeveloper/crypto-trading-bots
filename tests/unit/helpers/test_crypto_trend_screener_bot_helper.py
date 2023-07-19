@@ -84,11 +84,11 @@ class TestCryptoTrendScreenerBotHelper(unittest.TestCase):
 
         # Verify the result
 
-        expected_result = "###UP-TREND,BTCUSDT,###START ROTATION AFTER UP-TREND,ETHUSDT,###DOWN-TREND,XRPUSDT,###START ROTATION AFTER DOWN-TREND"
+        expected_result = "###UP-TREND,BTCUSDT,###START ROTATION AFTER UP-TREND,ETHUSDT,###DOWN-TREND,XRPUSDT,###START ROTATION AFTER DOWN-TREND,###ROTATION"
         self.assertEqual(result, expected_result)
 
     def test_save_tw_report(self):
-        report = "###UP-TREND,BTCUSDT,###START ROTATION AFTER UP-TREND,ETHUSDT,###DOWN-TREND,XRPUSDT"
+        report = "###UP-TREND,BTCUSDT,###START ROTATION AFTER UP-TREND,ETHUSDT,###DOWN-TREND,XRPUSDT,###ROTATION"
         file_path = "reports/report.txt"
 
         # Test the method
