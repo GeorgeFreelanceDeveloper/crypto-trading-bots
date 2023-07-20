@@ -8,17 +8,17 @@ class MarketsRepository:
 
     def __init__(self, config):
         self.most_traded_us_stocks_file_path = config["mostTradedUsStocks"]["tickersFilePath"]
-        self.russell_2000_file_path = config["sp500:"]["tickersFilePath:"]
+        self.russell_2000_file_path = config["sp500"]["tickersFilePath"]
         self.sp_500_file_path = config["russell2k"]["tickersFilePath"]
 
     def load_most_traded_us_stocks(self):
-        self._get_tickers(self.most_traded_us_stocks_file_path)
+        return self._get_tickers(self.most_traded_us_stocks_file_path)
 
     def load_russell_2000(self):
-        self._get_tickers(self.russell_2000_file_path)
+        return self._get_tickers(self.russell_2000_file_path)
 
     def load_sp_500(self):
-        self._get_tickers(self.sp_500_file_path)
+        return self._get_tickers(self.sp_500_file_path)
 
     @staticmethod
     def _get_tickers(file_path: str) -> list:
