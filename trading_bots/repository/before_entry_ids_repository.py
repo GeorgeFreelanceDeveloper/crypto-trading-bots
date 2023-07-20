@@ -17,7 +17,7 @@ class BeforeEntryIdsRepository:
                     return json.loads(content)
                 logging.debug(f"Loaded before entry ids list: {content}")
         except Exception as e:
-            logging.error(f"Failed to load before entry ids list: {str(e)}")
+            logging.exception(f"Failed to load before entry ids list: {str(e)}")
             sys.exit(-1)
 
     def save(self, before_entry_ids: list) -> None:
@@ -27,5 +27,5 @@ class BeforeEntryIdsRepository:
             with open(self.before_entry_ids_json_path, 'w') as f:
                 json.dump(before_entry_ids, f, indent=4)
         except Exception as e:
-            logging.error(f"Failed to save before entry ids list: {str(e)}")
+            logging.exception(f"Failed to save before entry ids list: {str(e)}")
             sys.exit(-1)

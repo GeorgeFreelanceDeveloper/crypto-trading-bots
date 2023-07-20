@@ -22,7 +22,7 @@ class UsEquityOrdersRepository:
             logging.debug(f"Loaded orders: \n {result}")
             return result
         except Exception as e:
-            logging.error(f"Failed load orders: {str(e)}")
+            logging.exception(f"Failed load orders: {str(e)}")
             sys.exit(-1)
 
     def save_orders(self, orders: list) -> None:
@@ -31,5 +31,5 @@ class UsEquityOrdersRepository:
             logging.debug(f"Orders: {orders}")
             pd.DataFrame(orders).to_csv(self.orders_file_path, index=False)
         except Exception as e:
-            logging.error(f"Failed save orders: {str(e)}")
+            logging.exception(f"Failed save orders: {str(e)}")
             sys.exit(-1)

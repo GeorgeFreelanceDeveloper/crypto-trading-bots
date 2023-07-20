@@ -56,7 +56,7 @@ class EquityLevelTraderBotCapital(Bot):
                     logging.info("Price reach before entry price, set attribute before_entry")
                     order["before_entry"] = True
             except Exception as e:
-                logging.error(f"Failed proces order [OrderId: {order['id']}]: {str(e)}")
+                logging.exception(f"Failed proces order [OrderId: {order['id']}]: {str(e)}")
 
         logging.info("---------------------------------")
         logging.info("Finished check early reaction step")
@@ -101,7 +101,7 @@ class EquityLevelTraderBotCapital(Bot):
                     order["active"] = True
                     break
             except Exception as e:
-                logging.error(f"Failed place trade [OrderId: {order['id']}]: {str(e)}")
+                logging.exception(f"Failed place trade [OrderId: {order['id']}]: {str(e)}")
 
         logging.info("---------------------------------")
         logging.info("Finished place trade step")

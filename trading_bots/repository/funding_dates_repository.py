@@ -19,7 +19,7 @@ class FundingDatesRepository:
                 logging.debug(f"Loaded funding dates list: {content}")
             return [datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S') for dt_str in string_list]
         except Exception as e:
-            logging.error(f"Failed to load funding dates list: {str(e)}")
+            logging.exception(f"Failed to load funding dates list: {str(e)}")
             sys.exit(-1)
 
     def save(self, funding_dates: list) -> None:
@@ -29,5 +29,5 @@ class FundingDatesRepository:
             with open(self.funding_dates_json_path, 'w') as f:
                 json.dump([dt.strftime('%Y-%m-%d %H:%M:%S') for dt in funding_dates], f, indent=4)
         except Exception as e:
-            logging.error(f"Failed to save funding dates list: {str(e)}")
+            logging.exception(f"Failed to save funding dates list: {str(e)}")
             sys.exit(-1)

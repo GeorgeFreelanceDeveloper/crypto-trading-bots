@@ -23,7 +23,7 @@ class EarningsCalendarRepository:
             logging.debug(f"Loaded earning calendar (first 5 rows): {result[0:5]}")
             return result
         except Exception as e:
-            logging.error(f"Failed to load earning calendar: {str(e)}")
+            logging.exception(f"Failed to load earning calendar: {str(e)}")
             sys.exit(-1)
 
     def load_old(self) -> list:

@@ -32,7 +32,7 @@ class EquityLevelTraderBotCapitalHelper:
             logging.debug(f"Response getPositions: {positions}")
             return len(positions) > 0
         except Exception as e:
-            logging.error(f"Failed call get_positions on CapitalBrokerClient: {str(e)}")
+            logging.exception(f"Failed call get_positions on CapitalBrokerClient: {str(e)}")
             sys.exit(-1)
 
     def place_trade(self, order: dict):

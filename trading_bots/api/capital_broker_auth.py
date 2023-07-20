@@ -45,12 +45,13 @@ class CapitalBrokerAuth:
             }
             conn.request("POST", "/api/v1/session", payload, headers)
             res = conn.getresponse()
-            data = json.loads(res.read().decode("utf-8"))
+            response_text = res.read().decode("utf-8")
+            logging.debug(f"Response get_new_authorization_token: {response_text}")
 
-            logging.debug(f"Response get_new_authorization_token: {data}")
             if res.status != 200:
                 raise Exception(f"HTTP Error {res.status}: {res.reason}")
 
+            data = json.loads(response_text)
             authorization_token = {
                 "X-SECURITY-TOKEN": res.getheader("X-SECURITY-TOKEN"),
                 "CST": res.getheader("CST")
@@ -62,7 +63,7 @@ class CapitalBrokerAuth:
 
             return authorization_token
         except Exception as e:
-            logging.error(f"Failed call POST method /api/v1/session on capital.com REST api: {str(e)}")
+            logging.exception(f"Failed call POST method /api/v1/session on capital.com REST api: {str(e)}")
             sys.exit(-1)
 
     def _switch_to_sub_account(self, account_id: int, authorization_token: dict):
@@ -80,13 +81,14 @@ class CapitalBrokerAuth:
             conn.request("PUT", "/api/v1/session", payload, headers)
             res = conn.getresponse()
             data = res.read()
-            logging.debug(f"Response switch_to_sub_account: {data.decode('utf-8')}")
+            response_text = data.decode('utf-8')
+            logging.debug(f"Response switch_to_sub_account: {response_text}")
 
             if res.status != 200:
                 raise Exception(f"HTTP Error {res.status}: {res.reason}")
 
         except Exception as e:
-            logging.error(f"Failed call PUT method /api/v1/session on capital.com REST api: {str(e)}")
+            logging.exception(f"Failed call PUT method /api/v1/session on capital.com REST api: {str(e)}")
             sys.exit(-1)
 
     @staticmethod

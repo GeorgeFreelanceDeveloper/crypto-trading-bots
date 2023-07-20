@@ -17,5 +17,5 @@ class ConfigRepository:
                 logging.debug(f"Loaded config: {config}")
                 return config
         except Exception as e:
-            logging.error(f"Failed to load config: {str(e)}")
+            logging.exception(f"Failed to load config: {str(e)}")
             sys.exit(-1)

@@ -31,19 +31,17 @@ class CapitalBrokerClient:
             }
             conn.request("GET", f"/api/v1/markets?&epics={ticker}", payload, headers)
             res = conn.getresponse()
+            response_text = res.read().decode("utf-8")
 
+            logging.debug(f"Response get_market_info: {response_text}")
             if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
+                raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
-            response = res.read().decode("utf-8")
-
-            logging.debug(f"Response get_market_info: {response}")
-
-            market_details = json.loads(response)["marketDetails"]
-
+            market_details = json.loads(response_text)["marketDetails"]
             return market_details[0]
         except Exception as e:
-            raise Exception(f"Failed call GET method /api/v1/markets on capital.com REST api: {str(e)}")
+            logging.exception(f"Failed call GET method /api/v1/markets on capital.com REST api: {str(e)}")
+            raise
 
     def get_last_closed_bar(self, ticker: str, time_frame: str = "MINUTE") -> dict:
         try:
@@ -62,10 +60,12 @@ class CapitalBrokerClient:
                          payload, headers)
 
             res = conn.getresponse()
+            response_text = res.read().decode("utf-8")
+            logging.debug(f"Response get_last_closed_bar: {response_text}")
             if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
+                raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
-            data = json.loads(res.read().decode("utf-8"))
+            data = json.loads(response_text)
 
             last_bar_raw = data["prices"][-1]
 
@@ -80,7 +80,8 @@ class CapitalBrokerClient:
             return last_bar
 
         except Exception as e:
-            raise Exception(f"Failed call GET method /api/v1/prices on capital.com REST api: {str(e)}")
+            logging.exception(f"Failed call GET method /api/v1/prices on capital.com REST api - {str(e)}")
+            raise
 
     def get_positions(self):
         try:
@@ -94,18 +95,18 @@ class CapitalBrokerClient:
             }
             conn.request("GET", "/api/v1/positions", payload, headers)
             res = conn.getresponse()
-
-            data = json.loads(res.read().decode("utf-8"))
-
-            logging.debug(f"Response is_open_positions: {data}")
+            response_text = res.read().decode("utf-8")
+            logging.debug(f"Response is_open_positions: {response_text}")
 
             if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
+                raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
+            data = json.loads(response_text)
             return data["positions"]
         except Exception as e:
-            raise Exception(
+            logging.exception(
                 f"Failed call GET method /api/v1/positions on api-capital.backend-capital.com REST api: {str(e)}")
+            raise
 
     def place_trade(self, trade: dict):
         try:
@@ -133,11 +134,12 @@ class CapitalBrokerClient:
 
             conn.request("POST", "/api/v1/positions", payload, headers)
             res = conn.getresponse()
-
-            logging.debug(f"Response place_trade: {res.read().decode('utf-8')}")
+            response_text = res.read().decode('utf-8')
+            logging.debug(f"Response place_trade: {response_text}")
             if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
+                raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
         except Exception as e:
-            raise Exception(
+            logging.exception(
                 f"Failed call POST method /api/v1/positions on api-capital.backend-capital.com REST api: {str(e)}")
+            raise

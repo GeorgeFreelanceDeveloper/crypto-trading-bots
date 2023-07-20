@@ -27,5 +27,5 @@ class MarketsRepository:
             logging.debug(f"Tickers (first 5):\n {df.head()}")
             return df["Ticker"].tolist()
         except Exception as e:
-            logging.error(f"Failed read tickers from file {file_path}: {str(e)}")
+            logging.exception(f"Failed read tickers from file {file_path}: {str(e)}")
             sys.exit(-1)
