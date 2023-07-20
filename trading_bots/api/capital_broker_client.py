@@ -38,6 +38,10 @@ class CapitalBrokerClient:
                 raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
             market_details = json.loads(response_text)["marketDetails"]
+
+            if len(market_details) == 0:
+                raise Exception("Empty marketDetails list.")
+
             return market_details[0]
         except Exception as e:
             logging.exception(f"Failed call GET method /api/v1/markets on capital.com REST api: {str(e)}")
