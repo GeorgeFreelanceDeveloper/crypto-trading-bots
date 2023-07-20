@@ -49,7 +49,7 @@ class CapitalBrokerAuth:
             logging.debug(f"Response get_new_authorization_token: {response_text}")
 
             if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
+                raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
             data = json.loads(response_text)
             authorization_token = {
@@ -85,7 +85,7 @@ class CapitalBrokerAuth:
             logging.debug(f"Response switch_to_sub_account: {response_text}")
 
             if res.status != 200:
-                raise Exception(f"HTTP Error {res.status}: {res.reason}")
+                raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
         except Exception as e:
             logging.exception(f"Failed call PUT method /api/v1/session on capital.com REST api: {str(e)}")
