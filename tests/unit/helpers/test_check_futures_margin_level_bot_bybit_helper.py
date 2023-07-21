@@ -8,10 +8,13 @@ from trading_bots.helpers.check_futures_margin_level_bot_bybit_helper import Che
 
 class TestCheckFuturesMarginLevelBotBybitHelper(unittest.TestCase):
 
+    fixture_folder_path = "tests/unit/helpers/fixtures"
+    # fixture_folder_path = "fixtures" # for run tests in ide
+
     def setUp(self):
         # Initialize the CheckFuturesMarginLevelBotBybitHelper object for testing
         self.pybit_client = MagicMock()
-        self.funding_dates_json_path = "fixtures/test_funding_dates.json"
+        self.funding_dates_json_path = f"{self.fixture_folder_path}/test_funding_dates.json"
 
         with open(self.funding_dates_json_path, "w") as file:
             file.write("[]")

@@ -6,7 +6,7 @@
 [![Build Status](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/downloads/)
 ![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 
-Trading bots for automate trading and risk management in crypto futures market.
+Trading bots for automate trading and risk management in crypto futures and stocks market.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Trading bots for automate trading and risk management in crypto futures market.
 - [Contributors](#contributors)
 
 ## About
-This repository contains trading bots designed for automated trading, allowing for the execution of trades based on predefined rules and strategies. Additionally, these bots incorporate risk management techniques, such as setting stop-loss orders and managing position sizes, to effectively mitigate potential losses. The bots are specifically tailored for the crypto futures market and are implemented using the Python programming language.
+This repository contains trading bots designed for automated trading, allowing for the execution of trades based on predefined rules and strategies. Additionally, these bots incorporate risk management techniques, such as setting stop-loss orders and managing position sizes, to effectively mitigate potential losses. The bots are specifically tailored for the crypto futures and stocks market and are implemented using the Python programming language.
 
 **Developed trading bots:**
 * CryptoTrendScreenerBot
@@ -26,6 +26,7 @@ This repository contains trading bots designed for automated trading, allowing f
 * EarlyReactionBotBybit
 * CloseTradesAtTimeBotBybit
 * CheckFuturesMarginLevelBotBybit
+* EquityLevelTraderBotCapital
 
 **Exchange api documentation:**
 * [Bybit rest api v5 documentation](https://bybit-exchange.github.io/docs/v5/intro)
@@ -96,6 +97,15 @@ make CheckFuturesMarginLevelBotBybitSwing # Swing bot
 make CheckFuturesMarginLevelBotBybitPosition # Position bot
 ```
 
+### EquityLevelTraderBotCapital
+Trading bot for trading US shares through the Capital.com broker. A trading bot that monitors the current price and 
+watch whether price arrives at entry price for place trade and if order was an early reaction or not. 
+(If the share price reaches 33% before the entry and then react to profit).
+
+```bash
+make equityLevelTraderBotCapitalPositionLong # Position long portfolio
+make equityLevelTraderBotCapitalPositionShort # Position short portfolio
+```
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->

@@ -9,15 +9,22 @@ from trading_bots.helpers.early_reaction_bot_bybit_helper import EarlyReactionBo
 
 class TestEarlyReactionBotBybitHelper(unittest.TestCase):
 
+    fixture_folder_path = "tests/unit/helpers/fixtures"
+    # fixture_folder_path = "fixtures" # for run tests in ide
+
     def setUp(self):
         # Initialize the EarlyReactionBotBybitHelper object for testing
         self.pybit_client = MagicMock()
-        self.before_entry_ids_json_path = "fixtures/before_entry_ids.json"
-
+        self.before_entry_ids_json_path = f"{self.fixture_folder_path}/before_entry_ids.json"
+        config = {
+            "base": {
+                "percentageBeforeEntry": 0.33
+            }
+        }
         with open(self.before_entry_ids_json_path, "w") as file:
             file.write("[]")
 
-        self.helper = EarlyReactionBotBybitHelper(self.pybit_client, self.before_entry_ids_json_path)
+        self.helper = EarlyReactionBotBybitHelper(config, self.pybit_client, self.before_entry_ids_json_path)
 
     def tearDown(self):
         # Delete the test file after each test
@@ -117,33 +124,6 @@ class TestEarlyReactionBotBybitHelper(unittest.TestCase):
         # Verify the result
         expected_before_entry_ids = ["12345"]
         self.assertEqual(before_entry_ids, expected_before_entry_ids)
-
-    def test_load_before_entry_ids_list(self):
-        # Create a test file with mock content
-        mock_content = '["12345", "67890", "98765"]'
-        with open(self.before_entry_ids_json_path, "w") as f:
-            f.write(mock_content)
-
-        # Test the method
-        result = self.helper.load_before_entry_ids_list()
-
-        # Verify the result
-        expected_result = ["12345", "67890", "98765"]
-        self.assertEqual(result, expected_result)
-
-    def test_save_before_entry_ids_list(self):
-        before_entry_ids = ["12345", "67890", "98765"]
-
-        # Test the method
-        self.helper.save_before_entry_ids_list(before_entry_ids)
-
-        # Read the content of the test file
-        with open(self.before_entry_ids_json_path) as f:
-            result_content = json.load(f)
-
-        # Verify the content of the file
-        expected_content = ['12345', '67890', '98765']
-        self.assertEqual(result_content, expected_content)
 
 
 if __name__ == '__main__':

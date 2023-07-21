@@ -1,0 +1,13 @@
+base:
+  ordersCsvPath: data/orders/us_equity_position_orders_long.csv
+  earningCalendarCsvPath: data/earnings_calendar.csv
+  earningCalendarOldCsvPath: data/earnings_calendar_old.csv
+  riskPerTradeUsd: 100
+  percentageBeforeEntry: 0.33
+capitalApi:
+  url: api-capital.backend-capital.com
+  username: x
+  password: x
+  apiKey: x
+  subAccountName: UsStocksPositionPortfolioLong
+  tokenExpireMinutes: 10

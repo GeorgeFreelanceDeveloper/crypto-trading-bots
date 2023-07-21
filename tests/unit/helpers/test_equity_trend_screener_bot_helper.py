@@ -12,23 +12,6 @@ class TestEquityTrendScreenerBotHelper(unittest.TestCase):
     def setUp(self) -> None:
         self.helper = EquityTrendScreenerBotHelper()
 
-    def test_get_tickers(self):
-        # Create test CSV file
-        test_file = "test_tickers.csv"
-        with open(test_file, "w") as file:
-            file.write("Ticker\n")
-            file.write("APPL\n")
-            file.write("GOOGL\n")
-            file.write("TSLA\n")
-
-        # Test method get_tickers
-        tickers = self.helper.get_tickers(test_file)
-        expected_tickers = ["APPL", "GOOGL", "TSLA"]
-        self.assertEqual(tickers, expected_tickers)
-
-        # Remove test CSV file
-        os.remove(test_file)
-
     @patch("trading_bots.helpers.equity_trend_screener_bot_helper.yf")
     def test_get_daily_ohlc(self, mock_yf):
         # Create test data
@@ -47,7 +30,7 @@ class TestEquityTrendScreenerBotHelper(unittest.TestCase):
         mock_yf.Ticker.return_value = mock_ticker
 
         # Test method get_daily_ohlc
-        ticker = "AAPL"
+        ticker = "NASDAQ:AAPL"
         ohlc = self.helper.get_daily_ohlc(ticker)
         expected_ohlc = pd.DataFrame({
             "startTime": ["2022-01-02", "2022-01-01"],
@@ -79,7 +62,7 @@ class TestEquityTrendScreenerBotHelper(unittest.TestCase):
     def test_count_items_without_rotation(self):
         # Create test data
         test_data = pd.DataFrame({
-            "ticker": ["AAPL", "GOOGL", "TSLA"],
+            "ticker": ["NASDAQ:AAPL", "NASDAQ:GOOGL", "NASDAQ:TSLA"],
             "context": ["Up-trend", "Rotation", "N/A"]
         })
 

@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.2.0] - 2023-07-21
+### Added
+- EquityLevelTraderBotCapital
+
+### Changes
+- Clean code EarlyReactionBybitBot
+- Create repositories for load and save data
+- Update data folder structure (create sub folders orders, markets and cache)
+- Update trading_bots_active_monitor.sh
+
 ## [1.1.1] - 2023-07-10
 ### Added
 - EquityTrendScreenerBot: Added section "rotation" into report
