@@ -8,7 +8,7 @@ from trading_bots import constants
 
 class EarlyReactionBotBybitHelper:
 
-    def __init__(self, pybit_client, before_entry_ids_json_path):
+    def __init__(self, config, pybit_client, before_entry_ids_json_path):
         self.pybit_client = pybit_client
         try:
             response = pybit_client.get_instruments_info(category=constants.BYBIT_LINEAR_CATEGORY)
@@ -19,6 +19,7 @@ class EarlyReactionBotBybitHelper:
         logging.debug("Response get_instruments_info: {}".format(response))
         self.instruments_info = response["result"]["list"]
         self.before_entry_ids_json_path = before_entry_ids_json_path
+        self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
 
     def get_pending_orders(self) -> list:
         logging.info("Get pending orders")
@@ -86,12 +87,29 @@ class EarlyReactionBotBybitHelper:
             before_entry_ids.remove(not_exists_id)
             logging.info("Removing not existing id: {}".format(not_exists_id))
 
-    def load_before_entry_ids_list(self) -> list:
-        with open(self.before_entry_ids_json_path) as f:
-            content = f.read()
-            if content:
-                return json.loads(content)
+    def check_price_reach_profit_target(self, order: dict, last_closed_bar: dict) -> bool:
+        order_side = order["side"]
+        take_profit = float(order["takeProfit"])
 
-    def save_before_entry_ids_list(self, before_entry_ids: list) -> None:
-        with open(self.before_entry_ids_json_path, 'w') as f:
-            json.dump(before_entry_ids, f, indent=4)
+        logging.debug(f"""
+                            Order Id: {order["orderId"]}, Order Side: {order_side}, Take Profit: {take_profit},
+                            Last Bar Low: {last_closed_bar["lowPrice"],} Last Bar High: {last_closed_bar["highPrice"]}
+                        """)
+
+        return (order_side == "Buy" and take_profit <= last_closed_bar["highPrice"]) or (
+                order_side == "Sell" and take_profit >= last_closed_bar["lowPrice"])
+
+    def check_price_reach_before_entry_price(self, order: dict, last_closed_bar: dict) -> bool:
+        order_side = order["side"]
+        stop_loss = float(order["stopLoss"])
+        entry_price = float(order["price"])
+        before_entry_price = entry_price + ((entry_price - stop_loss) * self.percentage_before_entry)
+
+        logging.debug(f"""
+                            Order Id: {order["orderId"]}, Order Side: {order_side}, "
+                            Before Entry Price: {before_entry_price}, "
+                            Last Bar Low: {last_closed_bar["lowPrice"]}, last Bar High: {last_closed_bar["highPrice"]}
+                        """)
+
+        return (order_side == "Buy" and before_entry_price >= last_closed_bar["lowPrice"]) or (
+                order_side == "Sell" and before_entry_price <= last_closed_bar["highPrice"])

@@ -1,7 +1,7 @@
 base:
   marginLevel: 10
   fundingIntervalInMinutes: 120
-  fundingDatesJsonPath: data/funding_dates_intraday.json
+  fundingDatesJsonPath: data/cache/funding_dates_intraday.json
 bybitApi:
   testnet: True
   apiKey:

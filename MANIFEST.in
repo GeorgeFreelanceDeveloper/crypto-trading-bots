@@ -2,6 +2,9 @@ include requirements.txt
 include config/*
 include doc/*
 include data/*
+include data/cache/*
+include data/markets/*
+include data/orders/*
 include scripts/*.sh
 
 include *.md

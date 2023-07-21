@@ -93,3 +93,11 @@ closeTradesAtTimeBotBybitPosition:
 checkFuturesMarginLevelBotBybitIntraday:
 	@echo "Run bot..."
 	. venv/bin/activate && ${PYTHON} -m trading_bots CheckFuturesMarginLevelBotBybitIntraday
+
+equityLevelTraderBotCapitalPositionLong:
+	@echo "Run bot..."
+	. venv/bin/activate && ${PYTHON} -m trading_bots EquityLevelTraderBotCapitalPositionLong
+
+equityLevelTraderBotCapitalPositionShort:
+	@echo "Run bot..."
+	. venv/bin/activate && ${PYTHON} -m trading_bots EquityLevelTraderBotCapitalPositionShort
