@@ -6,7 +6,7 @@
 [![Build Status](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/downloads/)
 ![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 
-Trading bots for automate trading and risk management in crypto futures market.
+Trading bots for automate trading and risk management in crypto futures and stocks market.
 
 ## Table of Contents
 
