@@ -9,7 +9,6 @@ pandas==1.5.1
 # Exchange api libraries
 pybit==5.2.0
 yfinance==0.2.20
-alpha_vantage==2.3.1
 
 # Tests
 timeout-decorator==0.5.0
