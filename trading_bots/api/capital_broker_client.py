@@ -40,7 +40,7 @@ class CapitalBrokerClient:
             market_details = json.loads(response_text)["marketDetails"]
 
             if len(market_details) == 0:
-                raise Exception("Empty marketDetails list.")
+                raise Exception("Empty list marketDetails")
 
             return market_details[0]
         except Exception as e:
@@ -70,6 +70,9 @@ class CapitalBrokerClient:
                 raise Exception(f"HTTP Error {res.status}: {res.reason} with response: {response_text}")
 
             data = json.loads(response_text)
+
+            if len(data["prices"]) == 0:
+                raise Exception("Empty list prices")
 
             last_bar_raw = data["prices"][-1]
 
