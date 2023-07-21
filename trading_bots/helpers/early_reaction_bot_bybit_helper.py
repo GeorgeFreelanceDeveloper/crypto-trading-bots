@@ -8,7 +8,7 @@ from trading_bots import constants
 
 class EarlyReactionBotBybitHelper:
 
-    def __init__(self, config, pybit_client, before_entry_ids_json_path):
+    def __init__(self, config, pybit_client):
         self.pybit_client = pybit_client
         try:
             response = pybit_client.get_instruments_info(category=constants.BYBIT_LINEAR_CATEGORY)
@@ -18,7 +18,6 @@ class EarlyReactionBotBybitHelper:
 
         logging.debug("Response get_instruments_info: {}".format(response))
         self.instruments_info = response["result"]["list"]
-        self.before_entry_ids_json_path = before_entry_ids_json_path
         self.percentage_before_entry = config["base"]["percentageBeforeEntry"]
 
     def get_pending_orders(self) -> list:
