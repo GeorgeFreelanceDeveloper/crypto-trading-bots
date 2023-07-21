@@ -26,6 +26,7 @@ This repository contains trading bots designed for automated trading, allowing f
 * EarlyReactionBotBybit
 * CloseTradesAtTimeBotBybit
 * CheckFuturesMarginLevelBotBybit
+* EquityLevelTraderBotCapital
 
 **Exchange api documentation:**
 * [Bybit rest api v5 documentation](https://bybit-exchange.github.io/docs/v5/intro)
@@ -96,6 +97,15 @@ make CheckFuturesMarginLevelBotBybitSwing # Swing bot
 make CheckFuturesMarginLevelBotBybitPosition # Position bot
 ```
 
+### EquityLevelTraderBotCapital
+Trading bot for trading US shares through the Capital.com broker. A trading bot that monitors the current price and 
+watch whether price arrives at entry price for place trade and if order was an early reaction or not. 
+(If the share price reaches 33% before the entry and then react to profit).
+
+```bash
+make equityLevelTraderBotCapitalPositionLong # Position long portfolio
+make equityLevelTraderBotCapitalPositionShort # Position short portfolio
+```
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
