@@ -17,7 +17,7 @@ Trading bots for automate trading and risk management in crypto futures and stoc
 - [Contributors](#contributors)
 
 ## About
-This repository contains trading bots designed for automated trading, allowing for the execution of trades based on predefined rules and strategies. Additionally, these bots incorporate risk management techniques, such as setting stop-loss orders and managing position sizes, to effectively mitigate potential losses. The bots are specifically tailored for the crypto futures market and are implemented using the Python programming language.
+This repository contains trading bots designed for automated trading, allowing for the execution of trades based on predefined rules and strategies. Additionally, these bots incorporate risk management techniques, such as setting stop-loss orders and managing position sizes, to effectively mitigate potential losses. The bots are specifically tailored for the crypto futures and stocks market and are implemented using the Python programming language.
 
 **Developed trading bots:**
 * CryptoTrendScreenerBot
