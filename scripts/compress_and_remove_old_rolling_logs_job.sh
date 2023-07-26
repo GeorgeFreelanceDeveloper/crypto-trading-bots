@@ -11,7 +11,9 @@ APP_LOG_FOLDERS=("/home/prod1/log/close-trades-at-time-bot-bybit-swing/" \
 "/home/prod1/log/early-reaction-bot-bybit-intraday/" \
 "/home/prod1/log/early-reaction-bot-bybit-position/" \
 "/home/prod1/log/early-reaction-bot-bybit-swing/" \
-"/home/prod1/log/check-futures-margin-level-bot-bybit-intraday/")
+"/home/prod1/log/check-futures-margin-level-bot-bybit-intraday/" \
+"/home/prod1/log/equity-level-trader-bot-capital-position-long/" \
+"/home/prod1/log/equity-level-trader-bot-capital-position-short/")
 
 echo "Start job"
 for log_folder in "${APP_LOG_FOLDERS[@]}"; do
