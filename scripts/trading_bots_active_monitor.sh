@@ -39,7 +39,8 @@ do
 	echo "********************************************"
 	echo "# ${BOT_NAMES[$i]}"
 	echo "********************************************"
-	grep "INFO - Start\|INFO - Finished" ${LOG_PATHS[$i]} | tail -2
+	grep -P "INFO - Start.*Bot.*" ${LOG_PATHS[$i]}| tail -1
+  grep -P "INFO - Finished.*Bot.*" ${LOG_PATHS[$i]}| tail -1
   echo
 done
 
