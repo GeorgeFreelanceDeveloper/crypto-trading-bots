@@ -18,7 +18,7 @@ class EquityLevelTraderBotCapital(Bot):
         self.helper = EquityLevelTraderBotCapitalHelper(config, earning_calendar, earning_calendar_old)
 
     def run(self):
-        logging.info("Start EquityLevelTraderCapital")
+        logging.info("Start EquityLevelTraderBotCapital")
 
         if not self.helper.is_open_exchange():
             logging.info("The American stock exchange is currently not open, the bot will not continue working.")
@@ -29,7 +29,7 @@ class EquityLevelTraderBotCapital(Bot):
         self.place_trade(orders)
         self.orders_repository.save_orders(orders)
 
-        logging.info("Finished EquityLevelTraderCapital")
+        logging.info("Finished EquityLevelTraderBotCapital")
 
     def check_early_reaction(self, orders):
         logging.info("---------------------------------")
