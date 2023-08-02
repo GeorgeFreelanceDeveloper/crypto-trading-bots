@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## [1.2.1] - 2023-08-21
+### Fixed
+- EquityLevelTraderBotCapital: updated logging info on start and finish
+- trading_bots_active_monitor: corrected displaying Start and Finish of bots
+- compress_and_remove_old_rolling_logs_job: added new log paths
+
 ## [1.2.1] - 2023-07-21
 ### Fixed
 - EarlyReactionBotBybit: fixed calling parameters in constructors
