@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
-## [1.2.2] - 2023-08-21
+## [1.2.2] - 2023-08-02
 ### Fixed
 - EquityLevelTraderBotCapital: updated logging info on start and finish
 - trading_bots_active_monitor: corrected displaying Start and Finish of bots
