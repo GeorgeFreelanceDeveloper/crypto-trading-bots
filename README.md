@@ -6,7 +6,7 @@
 [![Build Status](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/downloads/)
 ![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 
-Trading bots for automate trading and risk management in crypto futures and stocks market.
+Trading bots for automate trading and risk management in crypto futures markets.
 
 ## Table of Contents
 
@@ -97,22 +97,13 @@ make CheckFuturesMarginLevelBotBybitSwing # Swing bot
 make CheckFuturesMarginLevelBotBybitPosition # Position bot
 ```
 
-### EquityLevelTraderBotCapital
-Trading bot for trading US shares through the Capital.com broker. A trading bot that monitors the current price and 
-watch whether price arrives at entry price for place trade and if order was an early reaction or not. 
-(If the share price reaches 33% before the entry and then react to profit).
-
-```bash
-make equityLevelTraderBotCapitalPositionLong # Position long portfolio
-make equityLevelTraderBotCapitalPositionShort # Position short portfolio
-```
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
-     <td align="center"><a href="https://github.com/GeorgeQuantAnalyst"><img src="https://avatars.githubusercontent.com/u/112611533?v=4" width="100px;" alt=""/><br /><sub><b>GeorgeQuantAnalyst</b></sub></a><br /><a href="https://github.com/GeorgeQuantAnalyst" title="Ideas">🤔</a></td>
-    <td align="center"><a href="https://github.com/LucyQuantAnalyst"><img src="https://avatars.githubusercontent.com/u/115091833?v=4" width="100px;" alt=""/><br /><sub><b>LucyQuantAnalyst</b></sub></a><br /><a href="https://github.com/LucyQuantAnalyst" title="Code">💻</a></td>
+     <td align="center"><a href="https://github.com/GeorgeFreelanceDevelopert"><img src="https://avatars.githubusercontent.com/u/112611533?v=4" width="100px;" alt=""/><br /><sub><b>GeorgeFreelanceDeveloper</b></sub></a><br /><a href="https://github.com/GeorgeFreelanceDeveloper" title="Ideas">🤔</a></td>
+    <td align="center"><a href="https://github.com/LucyFreelanceDeveloper"><img src="https://avatars.githubusercontent.com/u/115091833?v=4" width="100px;" alt=""/><br /><sub><b>LucyFreelanceDeveloper</b></sub></a><br /><a href="https://github.com/LucyFreelanceDeveloper" title="Code">💻</a></td>
   </tr>
 </table>
