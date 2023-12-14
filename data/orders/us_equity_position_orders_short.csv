@@ -1,3 +1,0 @@
-id,ticker,direction,entry_price,stop_loss_price,before_entry,early_reaction,active,note
-1,AMZN,SHORT,134,140,True,,,
-2,BABA,SHORT,91,100,True,,True,
